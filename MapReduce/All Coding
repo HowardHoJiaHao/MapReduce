@@ -1,0 +1,30 @@
+# Start Hadoop 
+sudo su - hadoop
+start-all.sh
+
+# Make directory for the project
+mkdir assignment
+
+# Install Kaggle to allow access to its dataset
+pip install kaggle
+
+# Download dataset into AWS and unzip it
+kaggle datasets download -d kaushiksuresh147/bitcoin-tweets
+unzip bitcoin-tweets.zip
+
+# Upload dataset to hadoop system
+hadoop fs -put Bitcoin_tweets.csv dataset
+time hadoop fs -put Bitcoin_tweets.csv dataset
+
+# Execute the Mapper and Reducer
+mapred streaming -files mapper.py,reducer.py -input dataset -output result6 -mapper "python3 mapper.py" \
+-reducer "python3 reducer.py"
+
+# View the result
+hadoop fs -cat result6/part-00000 |less
+
+# List Running Job
+mapred job -list
+
+# Kill Runnning Job
+mapred job -kill <job_number>
